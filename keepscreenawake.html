@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0f172a" />
-  <title>Keep Screen Awake + 1-Minute Alerts</title>
+  <title>Keep Screen Awake</title>
 
   <style>
     * {
@@ -15,12 +14,9 @@
 
     body {
       min-height: 100vh;
-      font-family: Inter, Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.14), transparent 35%),
-        linear-gradient(135deg, #020617, #0f172a 55%, #111827);
-      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -28,549 +24,225 @@
     }
 
     .card {
-      width: min(100%, 560px);
-      padding: 30px;
-      border-radius: 26px;
-      background: rgba(15, 23, 42, 0.82);
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 24px 70px rgba(0,0,0,0.45);
-      backdrop-filter: blur(18px);
-    }
-
-    .top {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 22px;
+      width: 100%;
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 24px;
+      padding: 32px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(14px);
     }
 
     .icon {
-      width: 66px;
-      height: 66px;
-      flex: 0 0 66px;
-      border-radius: 20px;
-      display: grid;
-      place-items: center;
-      background: rgba(255,255,255,0.08);
-      font-size: 30px;
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 38px;
     }
 
     h1 {
-      font-size: clamp(24px, 5vw, 34px);
-      line-height: 1.1;
-      margin-bottom: 6px;
+      font-size: 30px;
+      margin-bottom: 10px;
     }
 
     .subtitle {
-      color: #94a3b8;
-      line-height: 1.55;
-      font-size: 14px;
-    }
-
-    .status-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin: 22px 0;
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 26px;
     }
 
     .status-box {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 16px;
+      padding: 18px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      margin-bottom: 22px;
     }
 
-    .label {
-      color: #94a3b8;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 1px;
-      margin-bottom: 7px;
-    }
-
-    .value {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .on { color: #86efac; }
-    .off { color: #fca5a5; }
-    .neutral { color: #bfdbfe; }
-
-    .countdown {
-      text-align: center;
-      background: rgba(255,255,255,0.07);
-      border-radius: 20px;
-      padding: 22px;
-      margin-bottom: 18px;
-    }
-
-    .countdown .small {
-      color: #94a3b8;
+    .status-label {
       font-size: 13px;
-      margin-bottom: 6px;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
-    #countdown {
-      font-size: 48px;
-      font-weight: 800;
-      letter-spacing: 2px;
+    .status {
+      font-size: 20px;
+      font-weight: bold;
     }
 
-    .controls {
-      display: grid;
-      gap: 12px;
+    .active {
+      color: #86efac;
+    }
+
+    .inactive {
+      color: #fca5a5;
     }
 
     button {
       width: 100%;
-      border: 0;
-      border-radius: 15px;
-      padding: 14px 18px;
-      font-size: 15px;
-      font-weight: 700;
+      border: none;
+      padding: 15px 20px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
-      transition: transform .18s ease, opacity .18s ease;
+      transition: 0.25s ease;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    .primary {
-      background: #fff;
+    #toggleButton {
+      background: #ffffff;
       color: #0f172a;
     }
 
-    .secondary {
-      background: rgba(255,255,255,0.09);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .danger {
-      background: rgba(239,68,68,0.16);
-      color: #fecaca;
-      border: 1px solid rgba(239,68,68,0.25);
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .options {
-      margin-top: 18px;
-      padding: 16px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.05);
-    }
-
-    .option {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 9px 0;
-      color: #cbd5e1;
-      font-size: 14px;
-    }
-
-    input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      accent-color: #22c55e;
-    }
-
-    .message {
-      margin-top: 18px;
-      min-height: 20px;
-      color: #cbd5e1;
-      font-size: 13px;
-      line-height: 1.5;
+    #toggleButton:hover {
+      transform: translateY(-2px);
+      opacity: 0.92;
     }
 
     .note {
-      margin-top: 16px;
-      color: #64748b;
-      font-size: 12px;
-      line-height: 1.55;
+      margin-top: 20px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #94a3b8;
     }
 
-    @media (max-width: 520px) {
-      .card {
-        padding: 22px;
-        border-radius: 22px;
-      }
-
-      .status-grid,
-      .row {
-        grid-template-columns: 1fr;
-      }
-
-      #countdown {
-        font-size: 42px;
-      }
+    .unsupported {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(239, 68, 68, 0.15);
+      color: #fecaca;
+      display: none;
     }
   </style>
 </head>
 
 <body>
-  <main class="card">
-    <div class="top">
-      <div class="icon">☀️</div>
-      <div>
-        <h1>Keep Screen Awake</h1>
-        <p class="subtitle">
-          Keep the display awake while this page is visible and receive a repeating alert every 1 minute.
-        </p>
+
+  <div class="card">
+
+    <div class="icon">☀️</div>
+
+    <h1>Keep Screen Awake</h1>
+
+    <p class="subtitle">
+      Prevent your screen from sleeping while this page is open and active.
+    </p>
+
+    <div class="status-box">
+      <div class="status-label">Wake Lock Status</div>
+      <div id="status" class="status inactive">
+        Screen Awake: OFF
       </div>
     </div>
 
-    <section class="status-grid">
-      <div class="status-box">
-        <div class="label">Wake Lock</div>
-        <div id="wakeStatus" class="value off">OFF</div>
-      </div>
+    <button id="toggleButton">
+      Keep Screen Awake
+    </button>
 
-      <div class="status-box">
-        <div class="label">Alert Timer</div>
-        <div id="timerStatus" class="value off">STOPPED</div>
-      </div>
-
-      <div class="status-box">
-        <div class="label">Notifications</div>
-        <div id="notificationStatus" class="value neutral">Not enabled</div>
-      </div>
-
-      <div class="status-box">
-        <div class="label">Alerts Sent</div>
-        <div id="alertCount" class="value neutral">0</div>
-      </div>
-    </section>
-
-    <section class="countdown">
-      <div class="small">Next alert in</div>
-      <div id="countdown">01:00</div>
-    </section>
-
-    <section class="controls">
-      <button id="startBtn" class="primary">Start Screen Awake + Alerts</button>
-
-      <div class="row">
-        <button id="wakeBtn" class="secondary">Enable Wake Lock</button>
-        <button id="notificationBtn" class="secondary">Enable Notifications</button>
-      </div>
-
-      <button id="stopBtn" class="danger">Stop Everything</button>
-    </section>
-
-    <section class="options">
-      <div class="option">
-        <span>Play alert sound every minute</span>
-        <input id="soundToggle" type="checkbox" checked>
-      </div>
-
-      <div class="option">
-        <span>Show browser notification</span>
-        <input id="notificationToggle" type="checkbox" checked>
-      </div>
-    </section>
-
-    <div id="message" class="message"></div>
+    <div id="unsupported" class="unsupported">
+      Your browser does not support the Screen Wake Lock API.
+    </div>
 
     <p class="note">
-      Best results: use this page over HTTPS or localhost in Chrome, Edge, or another browser that supports the Screen Wake Lock API.
-      Background tabs can be throttled by the browser, so exact 60-second alerts are most reliable while this page remains visible.
+      Keep this page open in the foreground. Some browsers may release the
+      wake lock when you switch tabs, minimize the browser, or enable battery
+      saving mode.
     </p>
-  </main>
+
+  </div>
 
   <script>
     let wakeLock = null;
-    let wakeLockWanted = false;
 
-    let timerRunning = false;
-    let remainingSeconds = 60;
-    let timerInterval = null;
-    let alertCount = 0;
+    const button = document.getElementById("toggleButton");
+    const statusText = document.getElementById("status");
+    const unsupported = document.getElementById("unsupported");
 
-    const wakeStatus = document.getElementById("wakeStatus");
-    const timerStatus = document.getElementById("timerStatus");
-    const notificationStatus = document.getElementById("notificationStatus");
-    const alertCountEl = document.getElementById("alertCount");
-    const countdownEl = document.getElementById("countdown");
-    const messageEl = document.getElementById("message");
+    function updateUI(active) {
+      if (active) {
+        statusText.textContent = "Screen Awake: ON";
+        statusText.classList.remove("inactive");
+        statusText.classList.add("active");
 
-    const startBtn = document.getElementById("startBtn");
-    const stopBtn = document.getElementById("stopBtn");
-    const wakeBtn = document.getElementById("wakeBtn");
-    const notificationBtn = document.getElementById("notificationBtn");
-
-    const soundToggle = document.getElementById("soundToggle");
-    const notificationToggle = document.getElementById("notificationToggle");
-
-    function setMessage(text) {
-      messageEl.textContent = text;
-    }
-
-    function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return String(mins).padStart(2, "0") + ":" + String(secs).padStart(2, "0");
-    }
-
-    function updateCountdown() {
-      countdownEl.textContent = formatTime(remainingSeconds);
-    }
-
-    function updateWakeUI(active) {
-      wakeStatus.textContent = active ? "ON" : "OFF";
-      wakeStatus.className = "value " + (active ? "on" : "off");
-      wakeBtn.textContent = active ? "Disable Wake Lock" : "Enable Wake Lock";
-    }
-
-    function updateTimerUI(active) {
-      timerStatus.textContent = active ? "RUNNING" : "STOPPED";
-      timerStatus.className = "value " + (active ? "on" : "off");
-    }
-
-    function updateNotificationUI() {
-      if (!("Notification" in window)) {
-        notificationStatus.textContent = "Unsupported";
-        notificationStatus.className = "value off";
-        return;
-      }
-
-      if (Notification.permission === "granted") {
-        notificationStatus.textContent = "Enabled";
-        notificationStatus.className = "value on";
-      } else if (Notification.permission === "denied") {
-        notificationStatus.textContent = "Blocked";
-        notificationStatus.className = "value off";
+        button.textContent = "Allow Screen to Sleep";
       } else {
-        notificationStatus.textContent = "Not enabled";
-        notificationStatus.className = "value neutral";
+        statusText.textContent = "Screen Awake: OFF";
+        statusText.classList.remove("active");
+        statusText.classList.add("inactive");
+
+        button.textContent = "Keep Screen Awake";
       }
     }
 
     async function requestWakeLock() {
-      wakeLockWanted = true;
-
       if (!("wakeLock" in navigator)) {
-        setMessage("Wake Lock is not supported by this browser.");
-        updateWakeUI(false);
-        return false;
-      }
-
-      if (document.visibilityState !== "visible") {
-        setMessage("Wake Lock can only be requested while the page is visible.");
-        return false;
+        unsupported.style.display = "block";
+        return;
       }
 
       try {
         wakeLock = await navigator.wakeLock.request("screen");
-        updateWakeUI(true);
-        setMessage("Wake Lock is active. The screen should remain awake while this page stays visible.");
+
+        updateUI(true);
 
         wakeLock.addEventListener("release", () => {
           wakeLock = null;
-          updateWakeUI(false);
+          updateUI(false);
         });
 
-        return true;
       } catch (error) {
-        console.error(error);
-        updateWakeUI(false);
-        setMessage("Could not activate Wake Lock: " + error.message);
-        return false;
+        console.error("Wake Lock error:", error);
+        updateUI(false);
       }
     }
 
     async function releaseWakeLock() {
-      wakeLockWanted = false;
-
-      if (wakeLock) {
-        try {
-          await wakeLock.release();
-        } catch (error) {
-          console.error(error);
-        }
+      if (wakeLock !== null) {
+        await wakeLock.release();
+        wakeLock = null;
       }
 
-      wakeLock = null;
-      updateWakeUI(false);
-      setMessage("Wake Lock disabled.");
+      updateUI(false);
     }
 
-    async function requestNotifications() {
-      if (!("Notification" in window)) {
-        setMessage("Browser notifications are not supported on this device.");
-        updateNotificationUI();
-        return false;
-      }
-
-      try {
-        const permission = await Notification.requestPermission();
-        updateNotificationUI();
-
-        if (permission === "granted") {
-          setMessage("Notifications enabled.");
-          return true;
-        }
-
-        if (permission === "denied") {
-          setMessage("Notifications were blocked. You may need to allow them in browser site settings.");
-        }
-
-        return false;
-      } catch (error) {
-        console.error(error);
-        setMessage("Could not enable notifications.");
-        return false;
-      }
-    }
-
-    function playBeep() {
-      if (!soundToggle.checked) return;
-
-      try {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        const audioContext = new AudioContextClass();
-
-        const oscillator = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-
-        oscillator.type = "sine";
-        oscillator.frequency.value = 880;
-
-        gain.gain.setValueAtTime(0.18, audioContext.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.35);
-
-        oscillator.connect(gain);
-        gain.connect(audioContext.destination);
-
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.35);
-      } catch (error) {
-        console.error("Sound error:", error);
-      }
-    }
-
-    function sendNotification() {
-      if (!notificationToggle.checked) return;
-
-      if ("Notification" in window && Notification.permission === "granted") {
-        try {
-          new Notification("1-Minute Reminder", {
-            body: "One minute has passed.",
-            tag: "minute-reminder"
-          });
-        } catch (error) {
-          console.error("Notification error:", error);
-        }
-      }
-    }
-
-    function triggerAlert() {
-      alertCount++;
-      alertCountEl.textContent = alertCount;
-
-      playBeep();
-      sendNotification();
-
-      setMessage("Alert " + alertCount + " sent at " + new Date().toLocaleTimeString() + ".");
-    }
-
-    function startTimer() {
-      if (timerRunning) return;
-
-      timerRunning = true;
-      remainingSeconds = 60;
-      updateCountdown();
-      updateTimerUI(true);
-
-      timerInterval = setInterval(() => {
-        remainingSeconds--;
-
-        if (remainingSeconds <= 0) {
-          triggerAlert();
-          remainingSeconds = 60;
-        }
-
-        updateCountdown();
-      }, 1000);
-    }
-
-    function stopTimer() {
-      timerRunning = false;
-
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-      }
-
-      remainingSeconds = 60;
-      updateCountdown();
-      updateTimerUI(false);
-    }
-
-    startBtn.addEventListener("click", async () => {
-      await requestWakeLock();
-
-      if ("Notification" in window && Notification.permission === "default") {
-        await requestNotifications();
-      }
-
-      startTimer();
-      setMessage("Screen-awake mode and 1-minute alerts started.");
-    });
-
-    stopBtn.addEventListener("click", async () => {
-      stopTimer();
-      await releaseWakeLock();
-      setMessage("Everything has been stopped.");
-    });
-
-    wakeBtn.addEventListener("click", async () => {
-      if (wakeLock) {
-        await releaseWakeLock();
-      } else {
+    button.addEventListener("click", async () => {
+      if (wakeLock === null) {
         await requestWakeLock();
+      } else {
+        await releaseWakeLock();
       }
     });
 
-    notificationBtn.addEventListener("click", async () => {
-      await requestNotifications();
-    });
+    /*
+      Browsers often release Wake Lock when the page
+      goes into the background.
 
+      If Wake Lock was enabled before switching away,
+      this attempts to restore it when the user returns.
+    */
     document.addEventListener("visibilitychange", async () => {
       if (
         document.visibilityState === "visible" &&
-        wakeLockWanted &&
+        statusText.textContent.includes("ON") &&
         wakeLock === null
       ) {
         await requestWakeLock();
       }
     });
 
-    window.addEventListener("beforeunload", async () => {
-      if (wakeLock) {
-        try {
-          await wakeLock.release();
-        } catch (_) {}
-      }
-    });
-
-    updateWakeUI(false);
-    updateTimerUI(false);
-    updateNotificationUI();
-    updateCountdown();
+    if (!("wakeLock" in navigator)) {
+      unsupported.style.display = "block";
+    }
   </script>
+
 </body>
 </html>
